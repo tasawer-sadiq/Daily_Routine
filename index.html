@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1120" />
+  <title>Daily Routine</title>
+  <link rel="icon" href="favicon.svg" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-text">
+        <p class="eyebrow">Daily Routine</p>
+        <h1>Daily Progress</h1>
+        <p class="sub">Track your daily routines and monthly consistency.</p>
+      </div>
+      <div class="progress-grid">
+        <div class="progress-card">
+          <div class="progress-ring" role="img" aria-label="Daily completion">
+            <svg viewBox="0 0 140 140" aria-hidden="true">
+              <circle class="ring-track" cx="70" cy="70" r="54"></circle>
+              <circle class="ring-value" id="dailyRing" cx="70" cy="70" r="54"></circle>
+            </svg>
+            <div class="progress-text">
+              <span id="dailyPercent">0%</span>
+            </div>
+          </div>
+          <p class="ring-label">Daily completion</p>
+          <div class="month-meta">
+            <span id="dailyRange">Today</span>
+            <span id="dailySummary"></span>
+          </div>
+        </div>
+        <div class="progress-card is-clickable" id="monthlyCard" role="button" tabindex="0" aria-label="Open monthly daily breakdown">
+          <div class="progress-ring" role="img" aria-label="Monthly completion">
+            <svg viewBox="0 0 140 140" aria-hidden="true">
+              <circle class="ring-track" cx="70" cy="70" r="54"></circle>
+              <circle class="ring-value" id="monthlyRing" cx="70" cy="70" r="54"></circle>
+            </svg>
+            <div class="progress-text">
+              <span id="monthlyPercent">0%</span>
+            </div>
+          </div>
+          <p class="ring-label">Monthly completion</p>
+          <div class="month-meta">
+            <span id="monthRange"></span>
+            <span id="monthlySummary"></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="content">
+      <div class="content-header">
+        <div>
+          <h2>Daily routines</h2>
+          <p class="muted">Check what you completed today.</p>
+        </div>
+        <div class="header-actions">
+          <label class="date-field">
+            <span>Date</span>
+            <input id="datePicker" type="date" />
+          </label>
+          <button class="ghost report-btn" id="reportBtn" type="button" aria-label="Open reports">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 19h16M6 16V8m6 8V4m6 12V10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Reports
+          </button>
+          <button class="primary" id="addRoutineBtn">Add routine</button>
+        </div>
+      </div>
+
+      <ul id="routineList" class="routine-list"></ul>
+      <p id="emptyState" class="empty">No routines yet. Add your first routine.</p>
+    </section>
+  </div>
+
+  <div class="modal" id="routineModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Add routine</h3>
+      <label class="field">
+        <span>Routine name</span>
+        <input id="routineName" type="text" placeholder="Wake up" />
+      </label>
+      <label class="field">
+        <span>Description</span>
+        <input id="routineDescription" type="text" placeholder="At 7:00 AM" />
+      </label>
+      <div class="modal-actions">
+        <button class="ghost" id="cancelModal">Cancel</button>
+        <button class="primary" id="saveRoutine">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="reportModal" aria-hidden="true">
+    <div class="modal-card report-card" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+      <div class="report-header">
+        <h3 id="reportTitle">Monthly reports</h3>
+        <button class="ghost" id="closeReport">Close</button>
+      </div>
+      <ul id="reportList" class="report-list"></ul>
+      <p id="reportEmpty" class="empty">No reports yet.</p>
+      <p class="report-note">Stores up to 12 months, then clears older data.</p>
+    </div>
+  </div>
+
+  <div class="modal" id="monthDetailModal" aria-hidden="true">
+    <div class="modal-card report-card" role="dialog" aria-modal="true" aria-labelledby="monthDetailTitle">
+      <div class="report-header">
+        <div>
+          <h3 id="monthDetailTitle">Monthly daily progress</h3>
+          <p class="muted" id="monthDetailRange"></p>
+        </div>
+        <button class="ghost" id="closeMonthDetail">Close</button>
+      </div>
+      <ul id="monthDetailList" class="report-list"></ul>
+      <p id="monthDetailEmpty" class="empty">No routines yet.</p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
