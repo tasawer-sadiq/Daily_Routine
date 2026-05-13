@@ -3,7 +3,8 @@
 Daily Routine is a dark, blue-themed routine tracker with daily and monthly progress rings, date-based checklist history, and a 12-month report archive. It works offline and can be installed as an app (PWA).
 
 
-  <img width="1887" height="866" alt="image" src="https://github.com/user-attachments/assets/1a4cf5a0-baae-4fd8-94ce-599af6e49b5d" />
+  <img width="1873" height="855" alt="Screenshot 2026-05-13 173601" src="https://github.com/user-attachments/assets/88d38fba-090b-4de1-a903-18d4f76912fb" />
+
 ## Features
 - Add, edit, and delete routines
 - Daily progress ring (per selected date)
