@@ -72,6 +72,41 @@ function getMonthRange(date = new Date()) {
   };
 }
 
+function isToday(dateValue) {
+  return dateValue === getToday();
+}
+
+function sanitizeSelectedDate(value) {
+  const today = getToday();
+  if (!value || value < today) {
+    return today;
+  }
+  return value;
+}
+
+function refreshDatePickerLimits() {
+  const today = getToday();
+  if (elements.datePicker) {
+    elements.datePicker.min = today;
+    elements.datePicker.max = today;
+  }
+}
+
+function startDayRolloverTimer() {
+  const now = new Date();
+  const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const msUntilMidnight = nextMidnight - now;
+
+  if (window.__dailyRolloverTimer) {
+    clearTimeout(window.__dailyRolloverTimer);
+  }
+
+  window.__dailyRolloverTimer = setTimeout(() => {
+    handleMonthRollover();
+    setSelectedDate(getToday());
+  }, Math.max(msUntilMidnight, 0));
+}
+
 function getMonthLabel(monthKey) {
   const date = toDate(`${monthKey}-01`);
   const label = date.toLocaleString("default", { month: "short" });
@@ -137,6 +172,9 @@ function loadState() {
   }
 
   handleMonthRollover();
+  state.selectedDate = sanitizeSelectedDate(state.selectedDate);
+  refreshDatePickerLimits();
+  startDayRolloverTimer();
 }
 
 function saveState() {
@@ -153,9 +191,11 @@ function saveState() {
 }
 
 function setSelectedDate(value) {
-  state.selectedDate = value;
-  if (elements.datePicker.value !== value) {
-    elements.datePicker.value = value;
+  const safeValue = sanitizeSelectedDate(value);
+  state.selectedDate = safeValue;
+  refreshDatePickerLimits();
+  if (elements.datePicker.value !== safeValue) {
+    elements.datePicker.value = safeValue;
   }
   saveState();
   render();
@@ -251,6 +291,10 @@ function deleteRoutine(id) {
 }
 
 function toggleCheck(id, checked) {
+  if (!isToday(state.selectedDate)) {
+    return;
+  }
+
   const targetDate = state.selectedDate;
   if (!state.checksByDate[targetDate]) {
     state.checksByDate[targetDate] = {};
@@ -358,11 +402,12 @@ function renderList() {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = Boolean(todayChecks[routine.id]);
+    checkbox.disabled = !isToday(state.selectedDate);
     checkbox.addEventListener("change", (event) => {
       toggleCheck(routine.id, event.target.checked);
     });
     const checkText = document.createElement("span");
-    checkText.textContent = "Done";
+    checkText.textContent = isToday(state.selectedDate) ? "Done" : "Locked";
     checkboxLabel.appendChild(checkbox);
     checkboxLabel.appendChild(checkText);
 
