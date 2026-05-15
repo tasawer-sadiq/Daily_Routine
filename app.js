@@ -608,7 +608,25 @@ function initEvents() {
 function registerServiceWorker() {
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("sw.js");
+      navigator.serviceWorker.register("sw.js").then((registration) => {
+        // Check for updates periodically
+        setInterval(() => {
+          registration.update();
+        }, 60000); // Check every minute
+
+        // Listen for new service worker installation
+        registration.addEventListener("updatefound", () => {
+          const newWorker = registration.installing;
+          newWorker.addEventListener("statechange", () => {
+            if (newWorker.state === "activated") {
+              // New service worker activated
+              if (confirm("New version available! Reload to get the latest updates?")) {
+                window.location.reload();
+              }
+            }
+          });
+        });
+      });
     });
   }
 }
