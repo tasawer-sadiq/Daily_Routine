@@ -404,6 +404,35 @@ body {
   margin: 0;
   display: grid;
   gap: 10px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Custom scrollbar styling */
+.report-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.report-list::-webkit-scrollbar-track {
+  background: var(--surface-alt);
+  border-radius: 10px;
+}
+
+.report-list::-webkit-scrollbar-thumb {
+  background: var(--blue-700);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.report-list::-webkit-scrollbar-thumb:hover {
+  background: var(--blue-900);
+}
+
+/* Firefox scrollbar styling */
+.report-list {
+  scrollbar-color: var(--blue-700) var(--surface-alt);
+  scrollbar-width: thin;
 }
 
 .report-item {
