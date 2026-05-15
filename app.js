@@ -104,7 +104,25 @@ function startDayRolloverTimer() {
   window.__dailyRolloverTimer = setTimeout(() => {
     handleMonthRollover();
     setSelectedDate(getToday());
+    // Restart the timer for the next day
+    startDayRolloverTimer();
   }, Math.max(msUntilMidnight, 0));
+}
+
+function startPeriodicDateCheck() {
+  // Check every minute if the date has changed and update if needed
+  if (window.__periodicDateCheckTimer) {
+    clearInterval(window.__periodicDateCheckTimer);
+  }
+
+  window.__periodicDateCheckTimer = setInterval(() => {
+    const today = getToday();
+    if (state.selectedDate !== today && isToday(state.selectedDate) === false) {
+      // Date has changed, update the app
+      handleMonthRollover();
+      setSelectedDate(today);
+    }
+  }, 60000); // Check every minute
 }
 
 function getMonthLabel(monthKey) {
@@ -175,6 +193,7 @@ function loadState() {
   state.selectedDate = sanitizeSelectedDate(state.selectedDate);
   refreshDatePickerLimits();
   startDayRolloverTimer();
+  startPeriodicDateCheck();
 }
 
 function saveState() {
@@ -205,8 +224,12 @@ function handleMonthRollover() {
   const currentMonthKey = getMonthKey();
   if (state.monthKey !== currentMonthKey) {
     const previousMonthKey = state.monthKey;
+    // Store the report for the previous month
     storeMonthlyReport(previousMonthKey);
     state.monthKey = currentMonthKey;
+    
+    // Preserve all data from the current month, not just going forward
+    // This ensures no data is lost during month transitions
     const keep = {};
     const prefix = `${currentMonthKey}-`;
     Object.keys(state.checksByDate).forEach((dateKey) => {
@@ -556,6 +579,29 @@ function initEvents() {
       addRoutine(name, description);
     }
     closeModal();
+  });
+
+  // Add visibility change handler to detect when the page comes back into focus
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      const today = getToday();
+      const currentMonthKey = getMonthKey();
+      // Check if date or month has changed
+      if (state.selectedDate !== today || state.monthKey !== currentMonthKey) {
+        handleMonthRollover();
+        setSelectedDate(today);
+      }
+    }
+  });
+
+  // Add focus handler as fallback
+  window.addEventListener("focus", () => {
+    const today = getToday();
+    const currentMonthKey = getMonthKey();
+    if (state.selectedDate !== today || state.monthKey !== currentMonthKey) {
+      handleMonthRollover();
+      setSelectedDate(today);
+    }
   });
 }
 
